@@ -74,6 +74,8 @@ def dispNext(next):
 
 def option():
     userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
+    while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
+            userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
     return userChoice.lower()
     
 def main():
@@ -112,6 +114,8 @@ def main():
 
         #end of round
         userChoice = str(input('\nType "PLAY" to continue playing, or "STOP" to stop playing: '))
+        while (userChoice.lower() != "play") & (userChoice.lower() != "stop"):
+            userChoice = str(input('Invalid input. Please type "PLAY" or "STOP": '))
         if userChoice.lower() == "play":
             i += 1
         elif userChoice.lower() == "stop":
