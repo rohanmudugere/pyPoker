@@ -1,4 +1,3 @@
-
 def deal():
     import random as r
     
@@ -64,6 +63,14 @@ def deal():
         cards.append(deck.pop(num))
     return cards
     
+def dispHand(first, second):
+    print(f"  Your cards are: {first}, {second}")
+
+def dispRiver(first, second, third):
+    print(f"  The first three cards in the river are: {first}, {second}, {third}")
+
+def dispNext(next):
+    print(f"  The next card in the river is: {next}")
     
 def main():
     i = 1
@@ -71,7 +78,26 @@ def main():
         #beginning of round
         print(f"Hand #{i}:")
         cards = deal()
-    
+
+        #assign cards
+        userCard1 = cards[0]
+        compCard1 = cards[1]
+        userCard2 = cards[2]
+        compCard2 = cards[3]
+        burned1 = cards[4]
+        river1 = cards[5]
+        river2 = cards[6]
+        river3 = cards[7]
+        burned2 = cards[8]
+        river4 = cards[9]
+        burned3 = cards[10]
+        river5 = cards[11]
+
+        dispHand(userCard1, userCard2) #reveal user hand
+        dispRiver(river1, river2, river3) #start flop
+        #finish flop
+        dispNext(river4)
+        dispNext(river5)
 
         #end of round
         userChoice = str(input('Type "PLAY" to continue playing, or "STOP" to stop playing: '))
@@ -79,6 +105,7 @@ def main():
             i += 1
         elif userChoice.lower() == "stop":
             break
+        
     print("Thank you for playing!")
 
 if __name__ == "__main__":
