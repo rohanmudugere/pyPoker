@@ -64,19 +64,23 @@ def deal():
     return cards
     
 def dispHand(first, second):
-    print(f"  Your cards are: {first}, {second}")
+    print(f"\n  Your cards are: {first}, {second}")
 
 def dispRiver(first, second, third):
-    print(f"  The first three cards in the river are: {first}, {second}, {third}")
+    print(f"\n  The first three cards in the river are: {first}, {second}, {third}")
 
 def dispNext(next):
-    print(f"  The next card in the river is: {next}")
+    print(f"\n  The next card in the river is: {next}")
+
+def option():
+    userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
+    return userChoice.lower()
     
 def main():
     i = 1
     while i > 0:
         #beginning of round
-        print(f"Hand #{i}:")
+        print(f"\nHand #{i}:")
         cards = deal()
 
         #assign cards
@@ -94,19 +98,26 @@ def main():
         river5 = cards[11]
 
         dispHand(userCard1, userCard2) #reveal user hand
-        dispRiver(river1, river2, river3) #start flop
+        userChoice = option()
+        if userChoice != "fold":
+            dispRiver(river1, river2, river3) #start flop
+            option()
+            if userChoice != "fold":
         #finish flop
-        dispNext(river4)
-        dispNext(river5)
+                dispNext(river4)
+                option()
+                if userChoice != "fold":
+                    dispNext(river5)
+                    option()
 
         #end of round
-        userChoice = str(input('Type "PLAY" to continue playing, or "STOP" to stop playing: '))
+        userChoice = str(input('\nType "PLAY" to continue playing, or "STOP" to stop playing: '))
         if userChoice.lower() == "play":
             i += 1
         elif userChoice.lower() == "stop":
             break
-        
-    print("Thank you for playing!")
+
+    print("\nThank you for playing!\n")
 
 if __name__ == "__main__":
     main()
