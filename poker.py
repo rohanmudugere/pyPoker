@@ -75,7 +75,7 @@ def dispNext(next):
 def option():
     userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
     while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
-            userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
+        userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
     return userChoice.lower()
     
 def main():
