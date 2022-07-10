@@ -77,8 +77,21 @@ def option():
     while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
         userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
     return userChoice.lower()
+
+def setBlind():
+    smBlind = int(input("Enter small blind amount: "))
+    return smBlind
+
+def setBuyIn(smBlind):
+    buyIn = int(input("Enter buy-in amount: "))
+    while (buyIn % smBlind != 0) | (buyIn < smBlind):
+        buyIn = int(input(f"Error! Buy-in must be greater than and divisible by {smBlind}. \nPlease re-enter buy-in amouunt: "))
+    return buyIn
     
 def main():
+    smBlind = setBlind()
+    buyIn = setBuyIn(smBlind)
+
     i = 1
     while i > 0:
         #beginning of round
