@@ -102,6 +102,8 @@ def option2(smBlind, potTot):
             raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
         newPotTot = potTot + raiseAmt * 2
         print(f"  Updated pot total: {newPotTot}")
+    elif userChoice.lower() == "check":
+        newPotTot = potTot
     return userChoice.lower(), newPotTot
 
 def setBlind():
