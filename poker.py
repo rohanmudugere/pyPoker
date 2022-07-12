@@ -22,16 +22,15 @@ def option1(smBlind):
     userChoice = input("  Would you like to CALL, RAISE, or FOLD: ")
     while (userChoice.lower() != "call") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
         userChoice = str(input('  Invalid input. Please type "CALL", "RAISE", or "FOLD": '))
-    if userChoice.lower() != "fold":
-        if userChoice.lower() == "call":
-            potTot = smBlind * 4
-            print(f"  Updated pot total: {potTot}")
-        elif userChoice.lower() == "raise":
-            raiseAmt = int(input("  How much would you like to raise: "))
-            while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-                raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
-            potTot = smBlind * 2 + raiseAmt * 2
-            print(f"  Updated pot total: {potTot}")
+    if userChoice.lower() == "call":
+        potTot = smBlind * 4
+        print(f"  Updated pot total: {potTot}")
+    elif userChoice.lower() == "raise":
+        raiseAmt = int(input("  How much would you like to raise: "))
+        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+            raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+        potTot = smBlind * 2 + raiseAmt * 2
+        print(f"  Updated pot total: {potTot}")
     else:
         potTot = smBlind * 3
     return userChoice.lower(), potTot
@@ -166,4 +165,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
