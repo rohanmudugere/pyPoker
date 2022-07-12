@@ -1,7 +1,7 @@
 def deal():
     import random as r
     
-    #initiailze decklist
+    #initiailze deck
     deck = {
     "1": "Ace of Spades",
     "2": "Two of Spades",
@@ -72,14 +72,40 @@ def dispRiver(first, second, third):
 def dispNext(next):
     print(f"\n  The next card in the river is: {next}")
 
-def option():
+def option1(smBlind):
+    print(f"\n  You are the small blind. Pot total: {smBlind * 3}")
+    userChoice = input("  Would you like to CALL, RAISE, or FOLD: ")
+    while (userChoice.lower() != "call") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
+        userChoice = str(input('  Invalid input. Please type "CALL", "RAISE", or "FOLD": '))
+    if userChoice.lower() != "fold":
+        if userChoice.lower() == "call":
+            potTot = smBlind * 4
+            print(f"  Updated pot total: {potTot}")
+        elif userChoice.lower() == "raise":
+            raiseAmt = int(input("  How much would you like to raise: "))
+            while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+                raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+            potTot = smBlind * 2 + raiseAmt * 2
+            print(f"  Updated pot total: {potTot}")
+    else:
+        potTot = smBlind * 3
+    return userChoice.lower(), potTot
+
+
+def option2(smBlind, potTot):
     userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
     while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
         userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
-    return userChoice.lower()
+    if userChoice.lower() == "raise":
+        raiseAmt = int(input("  How much would you like to raise: "))
+        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+            raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+        newPotTot = potTot + raiseAmt * 2
+        print(f"  Updated pot total: {newPotTot}")
+    return userChoice.lower(), newPotTot
 
 def setBlind():
-    smBlind = int(input("Enter small blind amount: "))
+    smBlind = int(input("\nEnter small blind amount: "))
     return smBlind
 
 def setBuyIn(smBlind):
@@ -113,17 +139,17 @@ def main():
         river5 = cards[11]
 
         dispHand(userCard1, userCard2) #reveal user hand
-        userChoice = option()
+        userChoice, potTot1 = option1(smBlind)
         if userChoice != "fold":
             dispRiver(river1, river2, river3) #start flop
-            option()
+            userChoice, potTot2 = option2(smBlind, potTot1)
             if userChoice != "fold":
         #finish flop
                 dispNext(river4)
-                option()
+                userChoice, potTot3 = option2(smBlind, potTot2)
                 if userChoice != "fold":
                     dispNext(river5)
-                    option()
+                    userChoice, potTot4 = option2(smBlind, potTot3)
 
         #end of round
         userChoice = str(input('\nType "PLAY" to continue playing, or "STOP" to stop playing: '))
