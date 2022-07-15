@@ -54,7 +54,7 @@ def option2(smBlind, potTot):
         newPotTot = potTot
         if userChoice.lower() == "check":
             loss = 0
-        if userChoice.lower() == "fold":
+        elif userChoice.lower() == "fold":
             loss = int(newPotTot / 2)
             print(f"\n  You lost {loss} chips.")
     return userChoice.lower(), newPotTot, loss
@@ -164,6 +164,9 @@ def main():
             result = "lose"
 
         if result == "lose":
+            if userChoice != "fold":
+                loss = potTot4 / 2
+                print(f" You lost {loss} chips.")
             balance -= loss
         elif result == "win":
             gain = potTot4 / 2
