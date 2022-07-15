@@ -47,14 +47,18 @@ def option2(smBlind, potTot, balance):
     while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
         userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
     if userChoice.lower() == "raise":
-        raiseAmt = int(input("  How much would you like to raise: "))
-        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - potTot / 2):
-            if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-                raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
-            elif (raiseAmt > balance - potTot / 2):
-                raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
-        newPotTot = potTot + raiseAmt * 2
-        print(f"  Updated pot total: {newPotTot}")
+        if (balance - potTot / 2 == 0):
+            print(f"  You have no chips left to bet.")
+            newPotTot = potTot
+        else:
+            raiseAmt = int(input("  How much would you like to raise: "))
+            while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - potTot / 2):
+                if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+                    raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+                elif (raiseAmt > balance - potTot / 2):
+                    raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
+            newPotTot = potTot + raiseAmt * 2
+            print(f"  Updated pot total: {newPotTot}")
         loss = 0
     elif (userChoice.lower() == "check") | (userChoice.lower() == "fold"):
         newPotTot = potTot
