@@ -17,7 +17,7 @@ def dispRiver(first, second, third):
 def dispNext(next):
     print(f"\n  The next card in the river is: {next}")
 
-def option1(smBlind):
+def option1(smBlind, balance):
     print(f"\n  You are the small blind.\n  Pot total: {smBlind * 3}")
     userChoice = input("  Would you like to CALL, RAISE, or FOLD: ")
     while (userChoice.lower() != "call") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
@@ -28,8 +28,11 @@ def option1(smBlind):
         loss = 0
     elif userChoice.lower() == "raise":
         raiseAmt = int(input("  How much would you like to raise: "))
-        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-            raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - smBlind):
+            if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+                raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+            elif (raiseAmt > balance - smBlind):
+                raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
         potTot = smBlind * 2 + raiseAmt * 2
         print(f"  Updated pot total: {potTot}")
         loss = 0
@@ -39,14 +42,17 @@ def option1(smBlind):
         print(f"\n  You lost {loss} chips.")
     return userChoice.lower(), potTot, loss
 
-def option2(smBlind, potTot):
+def option2(smBlind, potTot, balance):
     userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
     while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
         userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
     if userChoice.lower() == "raise":
         raiseAmt = int(input("  How much would you like to raise: "))
-        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-            raiseAmt = int(input("  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - potTot / 2):
+            if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
+                raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
+            elif (raiseAmt > balance - potTot / 2):
+                raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
         newPotTot = potTot + raiseAmt * 2
         print(f"  Updated pot total: {newPotTot}")
         loss = 0
@@ -149,17 +155,17 @@ def main():
         river5 = cards[11]
 
         dispHand(userCard1, userCard2) #reveal user hand
-        userChoice, potTot1, loss = option1(smBlind)
+        userChoice, potTot1, loss = option1(smBlind, balance)
         if userChoice != "fold":
             dispRiver(river1, river2, river3) #start flop
-            userChoice, potTot2, loss = option2(smBlind, potTot1)
+            userChoice, potTot2, loss = option2(smBlind, potTot1, balance)
             if userChoice != "fold":
         #finish flop
                 dispNext(river4)
-                userChoice, potTot3, loss = option2(smBlind, potTot2)
+                userChoice, potTot3, loss = option2(smBlind, potTot2, balance)
                 if userChoice != "fold":
                     dispNext(river5)
-                    userChoice, potTot4, loss = option2(smBlind, potTot3)
+                    userChoice, potTot4, loss = option2(smBlind, potTot3, balance)
         if userChoice == "fold":
             result = "lose"
 
@@ -174,6 +180,9 @@ def main():
             balance += gain
         
         print(f"  Updated balance: {balance} chips")
+        if balance == 0:
+            print(f"\nYou have run out of chips. ")
+            balance = setBuyIn(smBlind)
 
         #end round
         userChoice = str(input('\nType "PLAY" to continue playing, or "STOP" to stop playing: '))
