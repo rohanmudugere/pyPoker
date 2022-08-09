@@ -1,203 +1,214 @@
+import csv
+
+class Cards():
+    all = []
+    def __init__(self, value, suit):
+        self.value = value
+        self.suit = suit
+
+        Cards.all.append(self)
+
+    @classmethod
+    def addCards(cls):
+        with open("EBEC/deck.csv", "r") as file:
+            cardDict = csv.DictReader(file)
+            cardList = list(cardDict)
+
+        for card in cardList:
+            Cards(
+                value=card.get("value"),
+                suit=card.get("suit"),
+            )
+
+    def __repr__(self):
+        return f"The {self.value} of {self.suit}"
+
+class Suit():
+    def __init__(self, name):
+        self.name = name
+
+    def checkFlush(self, card1, card2, card3, card4, card5, card6, card7):
+        cards = [card1, card2, card3, card4, card5, card6, card7]
+        count = 0
+        for card in cards:
+            if card.suit == self.name:
+                count += 1
+        if count >= 5:
+            return True
+        else:
+            return False
+    
+    def checkRFlush(self, card1, card2, card3, card4, card5, card6, card7):
+        cards = [card1, card2, card3, card4, card5, card6, card7]
+        count = 0
+        for card in cards:
+            if (card.suit == self.name) & ((card.value == "Ace") | (card.value == "King") | (card.value == "Queen") | (card.value == "Jack")| (card.value == "10")):
+                count += 1
+        if count == 5:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def checkAmt(card1, card2, card3, card4, card5, card6, card7):
+        cards = [card1, card2, card3, card4, card5, card6, card7]
+        count = [0, 0, 0, 0, 0, 0, 0]
+        fourOfKind = False
+        fullHouse = False
+        threeOfKind = False
+        twoPair = False
+        pair = False
+        
+        i = 0
+        for card1 in cards:
+            for card2 in cards:
+                if card1.value == card2.value:
+                    count[i] += 1
+            i += 1
+        
+        for i in range(len(count)):
+            if count[i] == 4:
+                fourOfKind == True
+            elif count[i] == 3:
+                threeOfKind == True
+            elif count[i] == 2:
+                pair == True
+        
+        return fourOfKind, threeOfKind, pair
+
+class Player():
+    def __init__(self, name, rFlush, sFlush, fourOfKind, fullHouse, flush, straight, threeOfKind, twoPair, pair):
+        self.name = name
+        self.rFlush = rFlush
+        self.sFlush = sFlush
+        self.fourOfKind = fourOfKind
+        self.fullHouse = fullHouse
+        self.flush = flush
+        self.straight = straight
+        self.threeOfKind = threeOfKind
+        self.twoPair = twoPair
+        self.pair = pair
+
+    def result(self):
+        if self.rFlush == True:
+            return 9
+        elif self.sFlush == True:
+            return 8
+        elif self.fourOfKind == True:
+            return 7
+        elif self.fullHouse == True:
+            return 6
+        elif self.flush == True:
+            return 5
+        elif self.straight == True:
+            return 4
+        elif self.threeOfKind == True:
+            return 3
+        elif self.twoPair == True:
+            return 2
+        elif self.pair == True:
+            return 1
+        else:
+            return 0
+
+def createDict(cards):
+    keys = []
+    for i in range (1, 53):
+        keys.append(i)
+    return (dict(zip(keys, cards)))
+
 def deal(deck):
     import random as r
-
     #generate 12 cards
     cards = []
     for i in range(0, 12):
         num = r.choice(list(deck))
         cards.append(deck.pop(num))
     return cards
-    
-def dispHand(first, second):
-    print(f"\n  Your cards are: {first}, {second}")
 
-def dispRiver(first, second, third):
-    print(f"\n  The first three cards in the river are: {first}, {second}, {third}")
+def dispCards(card1, card2, card3, card4, card5, card6, card7, card8, card9):
+    print(f"\n  You have {card1} & {card2}")
+    print(f"\n  The computer has {card3} & {card4}")
+    print(f"\n  In the river: {card5}, {card6}, {card7}, {card8}, & {card9}")
 
-def dispNext(next):
-    print(f"\n  The next card in the river is: {next}")
-
-def option1(smBlind, balance):
-    print(f"\n  You are the small blind.\n  Pot total: {smBlind * 3}")
-    userChoice = input("  Would you like to CALL, RAISE, or FOLD: ")
-    while (userChoice.lower() != "call") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
-        userChoice = str(input('  Invalid input. Please type "CALL", "RAISE", or "FOLD": '))
-    if userChoice.lower() == "call":
-        potTot = smBlind * 4
-        print(f"  Updated pot total: {potTot}")
-        loss = 0
-    elif userChoice.lower() == "raise":
-        raiseAmt = int(input("  How much would you like to raise: "))
-        while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - smBlind):
-            if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-                raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
-            elif (raiseAmt > balance - smBlind):
-                raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
-        potTot = smBlind * 2 + raiseAmt * 2
-        print(f"  Updated pot total: {potTot}")
-        loss = 0
-    else:
-        potTot = smBlind * 3
-        loss = smBlind
-        print(f"\n  You lost {loss} chips.")
-    return userChoice.lower(), potTot, loss
-
-def option2(smBlind, potTot, balance):
-    userChoice = input("  Would you like to CHECK, RAISE, or FOLD: ")
-    while (userChoice.lower() != "check") & (userChoice.lower() != "raise") & (userChoice.lower() != "fold"):
-        userChoice = str(input('  Invalid input. Please type "CHECK", "RAISE", or "FOLD": '))
-    if userChoice.lower() == "raise":
-        if (balance - potTot / 2 == 0):
-            print(f"  You have no chips left to bet.")
-            newPotTot = potTot
-        else:
-            raiseAmt = int(input("  How much would you like to raise: "))
-            while (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind) | (raiseAmt > balance - potTot / 2):
-                if (raiseAmt % smBlind != 0) | (raiseAmt <= smBlind):
-                    raiseAmt = int(input("\n  Error. Your raise must be greater than and divisible by the small blind. \n  Please re-enter raise amount: "))
-                elif (raiseAmt > balance - potTot / 2):
-                    raiseAmt = int(input("\n  Error. Your raise cannot exceed your balance. \n  Please re-enter raise amount: "))  
-            newPotTot = potTot + raiseAmt * 2
-            print(f"  Updated pot total: {newPotTot}")
-        loss = 0
-    elif (userChoice.lower() == "check") | (userChoice.lower() == "fold"):
-        newPotTot = potTot
-        if userChoice.lower() == "check":
-            loss = 0
-        elif userChoice.lower() == "fold":
-            loss = int(newPotTot / 2)
-            print(f"\n  You lost {loss} chips.")
-    return userChoice.lower(), newPotTot, loss
-
-def setBlind():
-    smBlind = int(input("\nEnter small blind amount: "))
-    return smBlind
-
-def setBuyIn(smBlind):
-    buyIn = int(input("Enter buy-in amount: "))
-    while (buyIn % smBlind != 0) | (buyIn <= smBlind):
-        buyIn = int(input(f"Error! Buy-in must be greater than and divisible by {smBlind}. \nPlease re-enter buy-in amouunt: "))
-    return buyIn
-    
 def main():
-    smBlind = setBlind()
-    balance = setBuyIn(smBlind)
+    print("\nWelcome to Poker!")
 
-    i = 1
-    while i > 0:
-        #initiailze deck
-        deck = {
-        "1": "Ace of Spades",
-        "2": "Two of Spades",
-        "3": "Three of Spades",
-        "4": "Four of Spades", 
-        "5": "Five of Spades",
-        "6": "Six of Spades",
-        "7": "Seven of Spades",
-        "8": "Eight of Spades",
-        "9": "Nine of Spades",
-        "10": "Ten of Spades",
-        "11": "Jack of Spades",
-        "12": "Queen of Spades",
-        "13": "King of Spades",
-        "14": "Ace of Hearts",
-        "15": "Two of Hearts",
-        "16": "Three of Hearts",
-        "17": "Four of Hearts", 
-        "18": "Five of Hearts",
-        "19": "Six of Hearts",
-        "20": "Seven of Hearts",
-        "21": "Eight of Hearts",
-        "22": "Nine of Hearts",
-        "23": "Ten of Hearts",
-        "24": "Jack of Hearts",
-        "25": "Queen of Hearts",
-        "26": "King of Hearts",
-        "27": "Ace of Clubs",
-        "28": "Two of Clubs",
-        "29": "Three of Clubs",
-        "30": "Four of Clubs", 
-        "31": "Five of Clubs",
-        "32": "Six of Clubs",
-        "33": "Seven of Clubs",
-        "34": "Eight of Clubs",
-        "35": "Nine of Clubs",
-        "36": "Ten of Clubs",
-        "37": "Jack of Clubs",
-        "38": "Queen of Clubs",
-        "39": "King of Clubs",
-        "40": "Ace of Diamonds",
-        "41": "Two of Diamonds",
-        "42": "Three of Diamonds",
-        "43": "Four of Diamonds", 
-        "44": "Five of Diamonds",
-        "45": "Six of Diamonds",
-        "46": "Seven of Diamonds",
-        "47": "Eight of Diamonds",
-        "48": "Nine of Diamonds",
-        "49": "Ten of Diamonds",
-        "50": "Jack of Diamonds",
-        "51": "Queen of Diamonds",
-        "52": "King of Diamonds",
-    }
-        #begin round
-        print(f"\nHand #{i}:")
-        cards = deal(deck)
+    #create class for each player
+    user = Player("User", "rFlush", "sFlush", "fourOfKind", "fullHouse", "flush", "straight", "threeOfKind", "twoPair", "pair")
+    comp = Player("Comp", "rFlush", "sFlush", "fourOfKind", "fullHouse", "flush", "straight", "threeOfKind", "twoPair", "pair") 
 
-        #assign cards
-        userCard1 = cards[0]
-        compCard1 = cards[1]
-        userCard2 = cards[2]
-        compCard2 = cards[3]
-        burned1 = cards[4]
-        river1 = cards[5]
-        river2 = cards[6]
-        river3 = cards[7]
-        burned2 = cards[8]
-        river4 = cards[9]
-        burned3 = cards[10]
-        river5 = cards[11]
+    #create class for each suit
+    spades = Suit("Spades")
+    clubs = Suit("Clubs")
+    hearts = Suit("Hearts")
+    diamonds = Suit("Diamonds")
 
-        dispHand(userCard1, userCard2) #reveal user hand
-        userChoice, potTot1, loss = option1(smBlind, balance)
-        if userChoice != "fold":
-            dispRiver(river1, river2, river3) #start flop
-            userChoice, potTot2, loss = option2(smBlind, potTot1, balance)
-            if userChoice != "fold":
-        #finish flop
-                dispNext(river4)
-                userChoice, potTot3, loss = option2(smBlind, potTot2, balance)
-                if userChoice != "fold":
-                    dispNext(river5)
-                    userChoice, potTot4, loss = option2(smBlind, potTot3, balance)
-        if userChoice == "fold":
-            result = "lose"
+    #create and deal deck 
+    Cards.addCards()
+    deck = createDict(Cards.all)
+    cards = deal(deck)
 
-        if result == "lose":
-            if userChoice != "fold":
-                loss = potTot4 / 2
-                print(f" You lost {loss} chips.")
-            balance -= loss
-        elif result == "win":
-            gain = potTot4 / 2
-            print(f"  You won {gain} chips.")
-            balance += gain
-        
-        print(f"  Updated balance: {balance} chips")
-        if balance == 0:
-            print(f"\nYou have run out of chips. ")
-            balance = setBuyIn(smBlind)
+    #assign and display cards
+    userCard1 = cards[0]
+    compCard1 = cards[1]
+    userCard2 = cards[2]
+    compCard2 = cards[3]
+    burned1 = cards[4]
+    river1 = cards[5]
+    river2 = cards[6]
+    river3 = cards[7]
+    burned2 = cards[8]
+    river4 = cards[9]
+    burned3 = cards[10]
+    river5 = cards[11]
+    dispCards(userCard1, userCard2, compCard1, compCard2, river1, river2, river3, river4, river5)
 
-        #end round
-        userChoice = str(input('\nType "PLAY" to continue playing, or "STOP" to stop playing: '))
-        while (userChoice.lower() != "play") & (userChoice.lower() != "stop"):
-            userChoice = str(input('Invalid input. Please type "PLAY" or "STOP": '))
-        if userChoice.lower() == "play":
-            i += 1
-        elif userChoice.lower() == "stop":
-            break
+    #check for user flush
+    user.flush = Suit.checkFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.flush == False:
+        user.flush = Suit.checkFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.flush == False:
+        user.flush = Suit.checkFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.flush == False:
+        user.flush = Suit.checkFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
+    #check for comp flush
+    comp.flush = Suit.checkFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.flush == False:
+        comp.flush = Suit.checkFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.flush == False:
+        comp.flush = Suit.checkFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.flush == False:
+        comp.flush = Suit.checkFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
+    
+    #check for user royal Flush
+    user.rFlush = Suit.checkRFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.rFlush == False:
+        user.rFlush = Suit.checkRFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.rFlush == False:
+        user.rFlush = Suit.checkRFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
+    if user.rFlush == False:
+        user.rFlush = Suit.checkRFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
+    #check for comp royal flush
+    comp.rFlush = Suit.checkRFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.rFlush == False:
+        comp.rFlush = Suit.checkRFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.rFlush == False:
+        comp.rFlush = Suit.checkRFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
+    if comp.rFlush == False:
+        comp.rFlush = Suit.checkRFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
 
-    print("\nThank you for playing!\n")
+    user.fourOfKind, user.threeOfKind, user.pair = Suit.checkAmt(userCard1, userCard2, river1, river2, river3, river4, river5)
+    comp.fourOfKind, comp.threeOfKind, comp.pair = Suit.checkAmt(compCard1, compCard2, river1, river2, river3, river4, river5)
+
+    #determine winner
+    if user.result() > comp.result():
+        result = "won"
+    elif user.result() < comp.result():
+        result = "lost"
+    else:
+        result = "tie"
+    print(f"\nYou {result}!")
 
 if __name__ == "__main__":
     main()
