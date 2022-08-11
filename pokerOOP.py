@@ -35,6 +35,7 @@ class Cards():
             if values[i + 1] == values[i] + 1:
                 count1 += 1
         count2 = 0
+        values = list(set(values))
         for i in range(len(values) - 4):
             if values[i + 4] - values[i] == 4:
                 count2 += 1
