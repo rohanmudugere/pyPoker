@@ -30,11 +30,15 @@ class Cards():
             value = card.cardVals()
             values.append(value)
         values.sort()
-        count = 0
+        count1 = 0
         for i in range(len(values) - 1):
-            if values[i+1] == values[i] + 1:
-                count += 1
-        if (count >= 4) & ((values[len(values) - 1] - values[len(values) - 5] == 4) | (values[4] - values[0] == 4)):
+            if values[i + 1] == values[i] + 1:
+                count1 += 1
+        count2 = 0
+        for i in range(len(values) - 5):
+            if values[i + 4] - values[i] == 4:
+                count2 += 1
+        if (count1 >= 4) & (count2 >= 1):
             return True
         else:
             return False
