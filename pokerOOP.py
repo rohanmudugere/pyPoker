@@ -21,7 +21,26 @@ class Cards():
             )
 
     @staticmethod
-    def checkPairs(card1, card2, card3, card4, card5, card6, card7):
+    def checkStraight(card1, card2, card3, card4, card5, card6, card7):
+        cards = [card1, card2, card3, card4, card5, card6, card7]
+        values = []
+        for card in cards:
+            if card.value == "Ace":
+                values.append(1)
+            value = card.cardVals()
+            values.append(value)
+        values.sort()
+        count = 0
+        for i in range(len(values) - 1):
+            if values[i+1] == values[i] + 1:
+                count += 1
+        if (count >= 4) & ((values[len(values) - 1] - values[len(values) - 5] == 4) | (values[4] - values[0] == 4)):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def countPairs(card1, card2, card3, card4, card5, card6, card7):
         cards = [card1, card2, card3, card4, card5, card6, card7]
         count = 0
         for card in cards:
@@ -86,7 +105,7 @@ class Suit():
             return True
         else:
             return False
-
+    
 class Player():
     def __init__(self, name, rFlush, sFlush, flush, straight):
         self.name = name
@@ -123,8 +142,8 @@ def deal(deck):
     return cards
 
 def dispCards(card1, card2, card3, card4, card5, card6, card7, card8, card9):
-    print(f"\n  You have {card1} & {card2}")
-    print(f"\n  The computer has {card3} & {card4}")
+    print(f"\n  You have: {card1} & {card2}")
+    print(f"\n  The computer has: {card3} & {card4}")
     print(f"\n  In the river: {card5}, {card6}, {card7}, {card8}, & {card9}")
 
 def main():
@@ -193,34 +212,46 @@ def main():
         comp.rFlush = Suit.checkRFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
     if comp.rFlush == False:
         comp.rFlush = Suit.checkRFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
+    
+    #check for user and comp straight
+    user.straight = Cards.checkStraight(userCard1, userCard2, river1, river2, river3, river4, river5)
+    comp.straight = Cards.checkStraight(compCard1, compCard2, river1, river2, river3, river4, river5)
 
-    uCount = Cards.checkPairs(userCard1, userCard2, river1, river2, river3, river4, river5)
-    cCount = Cards.checkPairs(compCard1, compCard2, river1, river2, river3, river4, river5)
+    userCount = Cards.countPairs(userCard1, userCard2, river1, river2, river3, river4, river5)
+    compCount = Cards.countPairs(compCard1, compCard2, river1, river2, river3, river4, river5)
     
     uResult = user.result()
     cResult = comp.result()
 
     #determine winner
-    if (uResult > cResult) | (uCount > cCount):
+    if (uResult > cResult):
         result = "won"
-    elif (uResult < cResult) | (uCount > cCount):
+    elif (uResult < cResult):
+        result = "lost"
+    elif (userCount > compCount):
+        result = "won"
+    elif (userCount < compCount):
         result = "lost"
     else:
-        result = "tie"
-    
-    if result == "tie":
-        val1 = Cards.cardVals(userCard1)
-        val2 = Cards.cardVals(userCard2)
-        val3 = Cards.cardVals(compCard1)
-        val4 = Cards.cardVals(compCard2)
+        value1 = Cards.cardVals(userCard1)
+        value2 = Cards.cardVals(userCard2)
+        value3 = Cards.cardVals(compCard1)
+        value4 = Cards.cardVals(compCard2)
 
-        if val2 > val1:
-            val1 = val2
-        if val4 > val3:
-            val3 = val4
-            
-        if val1 > val3:
+        if value2 > value1:
+            value1, value2 = value2, value1
+        if value4 > value3:
+            value3, value4 = value4, value3
+        
+        if value1 > value3:
             result = "won"
+        elif value1 == value3:
+            if value2 > value4:
+                result = "won"
+            elif value2 == value4:
+                result = "tied"
+            else:
+                result = "lost"
         else:
             result = "lost"
     
