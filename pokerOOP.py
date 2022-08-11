@@ -30,16 +30,12 @@ class Cards():
             value = card.cardVals()
             values.append(value)
         values.sort()
-        count1 = 0
-        for i in range(len(values) - 1):
-            if values[i + 1] == values[i] + 1:
-                count1 += 1
-        count2 = 0
         values = list(set(values))
+        count = 0
         for i in range(len(values) - 4):
             if values[i + 4] - values[i] == 4:
-                count2 += 1
-        if (count1 >= 4) & (count2 >= 1):
+                count += 1
+        if count > 0:
             return True
         else:
             return False
@@ -131,7 +127,7 @@ class Player():
         else:
             return 0
 
-def createDict(cards):
+def createDeck(cards):
     keys = []
     for i in range (1, 53):
         keys.append(i)
@@ -166,7 +162,7 @@ def main():
 
     #create and deal deck 
     Cards.addCards()
-    deck = createDict(Cards.all)
+    deck = createDeck(Cards.all)
     cards = deal(deck)
 
     #assign and display cards
