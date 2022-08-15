@@ -156,37 +156,38 @@ class Player():
             elif numApp[n] == 4:
                 count4 += 1
         if count4 >= 1:
-            self.fourKind == True
+            self.fourKind = True
         if (count3 >= 1) & (count2 >= 1):
-            self.fullHouse == True
+            self.fullHouse = True
         if count3 >= 1:
-            self.threeKind == True
+            self.threeKind = True
         if count2 >= 2: 
-            self.twoPair == True
+            self.twoPair = True
         if count2 == 1:
-            self.pair == True
+            self.pair = True
 
     def result(self):
         if self.rFlush == True:
-            return 9
+            result = 9
         elif self.sFlush == True:
-            return 8
+            result = 8
         elif self.fourKind == True:
-            return 7
+            result = 7
         elif self.fullHouse == True:
-            return 6
+            result = 6
         elif self.flush == True:
-            return 5
+            result = 5
         elif self.straight == True:
-            return 4
+            result = 4
         elif self.threeKind == True:
-            return 3
+            result = 3
         elif self.twoPair == True:
-            return 2
+            result = 2
         elif self.pair == True:
-            return 1
+            result = 1
         else:
-            return 0
+            result = 0
+        return result
 
 def createDeck(cards):
     keys = []
