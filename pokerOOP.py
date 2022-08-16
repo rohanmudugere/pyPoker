@@ -142,9 +142,16 @@ class Player():
             value = card.cardVals()
             values.append(value)
         numApp = []
+        val1 = 0
+        val2 = 0
         for i in range(2, 15):
             ct = values.count(i)
+            if ct == 3:
+                val1 = i
+            elif ct == 2:
+                val2 = i
             numApp.append(ct)
+        
         count2 = 0
         count3 = 0
         count4 = 0
@@ -155,6 +162,7 @@ class Player():
                 count3 += 1
             elif numApp[n] == 4:
                 count4 += 1
+        
         if count4 >= 1:
             self.fourKind = True
         if (count3 >= 1) & (count2 >= 1):
@@ -165,6 +173,8 @@ class Player():
             self.twoPair = True
         if count2 == 1:
             self.pair = True
+        
+        return val1, val2
 
     def result(self):
         if self.rFlush == True:
@@ -298,28 +308,48 @@ def main():
     comp.straight = Cards.checkStraight(compCard1, compCard2, river1, river2, river3, river4, river5)
 
     #check user and comp pairs
-    Player.countPairs(user, userCard1, userCard2, river1, river2, river3, river4, river5)
-    Player.countPairs(comp, compCard1, compCard2, river1, river2, river3, river4, river5)
+    u3Val, uPairVal = Player.countPairs(user, userCard1, userCard2, river1, river2, river3, river4, river5)
+    c3Val, cPairVal = Player.countPairs(comp, compCard1, compCard2, river1, river2, river3, river4, river5)
     
     uResult = user.result()
     cResult = comp.result()
 
-    #determine winner
-    if (uResult > cResult):
-        result = "won"
-    elif (uResult < cResult):
-        result = "lost"
-    else:
-        value1 = Cards.cardVals(userCard1)
-        value2 = Cards.cardVals(userCard2)
-        value3 = Cards.cardVals(compCard1)
-        value4 = Cards.cardVals(compCard2)
+    #get high card values 
+    value1 = Cards.cardVals(userCard1)
+    value2 = Cards.cardVals(userCard2)
+    value3 = Cards.cardVals(compCard1)
+    value4 = Cards.cardVals(compCard2)
+    if value2 > value1:
+        value1, value2 = value2, value1
+    if value4 > value3:
+        value3, value4 = value4, value3
 
-        if value2 > value1:
-            value1, value2 = value2, value1
-        if value4 > value3:
-            value3, value4 = value4, value3
-        
+    #determine winner
+    if uResult > cResult:
+        result = "won"
+    elif uResult < cResult:
+        result = "lost"
+    elif (uResult == 6) | (uResult == 3) | (uResult == 2) | (uResult == 1):
+        if u3Val > c3Val:
+            result = "won"
+        elif u3Val < c3Val:
+            result = "lost"
+        elif uPairVal > cPairVal:
+            result = "won"
+        elif uPairVal < cPairVal:
+            result = "lost"
+        elif value1 > value3:
+            result = "won"
+        elif value1 == value3:
+            if value2 > value4:
+                result = "won"
+            elif value2 == value4:
+                result = "tied"
+            else:
+                result = "lost"
+        else:
+            result = "lost"        
+    else:   
         if value1 > value3:
             result = "won"
         elif value1 == value3:
