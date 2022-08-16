@@ -34,11 +34,13 @@ class Cards():
         count = 0
         for i in range(len(values) - 4):
             if values[i + 4] - values[i] == 4:
+                high = values[i + 4]
                 count += 1
         if count > 0:
-            return True
+            return True, high
         else:
-            return False 
+            high = 0
+            return False, high
 
     def cardVals(self):
         if self.value == "Ace":
@@ -77,14 +79,17 @@ class Suit():
 
     def checkFlush(self, card1, card2, card3, card4, card5, card6, card7):
         cards = [card1, card2, card3, card4, card5, card6, card7]
-        count = 0
+        cardsInSuit = []
         for card in cards:
             if card.suit == self.name:
-                count += 1
-        if count >= 5:
-            return True
+                value = card.cardVals()
+                cardsInSuit.append(value)
+        if len(cardsInSuit) >= 5:
+            high = max(cardsInSuit)
+            return True, high
         else:
-            return False
+            high = 0
+            return False, high
     
     def checkRFlush(self, card1, card2, card3, card4, card5, card6, card7):
         cards = [card1, card2, card3, card4, card5, card6, card7]
@@ -114,13 +119,16 @@ class Suit():
             count = 0
             for i in range(len(values) - 4):
                 if values[i + 4] - values[i] == 4:
+                    high = values[i + 4]
                     count += 1
             if count > 0:
-                return True
+                return True, high
             else:
-                return False
+                high = 0
+                return False, high
         else: 
-            return False
+            high = 0
+            return False, high
     
 class Player():
     def __init__(self, name, rFlush, sFlush, fourKind, fullHouse, flush, straight, threeKind, twoPair, pair):
@@ -253,21 +261,21 @@ def main():
     dispCards(userCard1, userCard2, compCard1, compCard2, river1, river2, river3, river4, river5)
 
     #check for user flush
-    user.flush = Suit.checkFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
+    user.flush, uFHigh = Suit.checkFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
     if user.flush == False:
-        user.flush = Suit.checkFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
+        user.flush, uFHigh = Suit.checkFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
         if user.flush == False:
-            user.flush = Suit.checkFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
+            user.flush, uFHigh = Suit.checkFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
             if user.flush == False:
-                user.flush = Suit.checkFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
+                user.flush, uFHigh = Suit.checkFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
     #check for comp flush
-    comp.flush = Suit.checkFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
+    comp.flush, cFHigh = Suit.checkFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
     if comp.flush == False:
-        comp.flush = Suit.checkFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
+        comp.flush, cFHigh = Suit.checkFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
         if comp.flush == False:
-            comp.flush = Suit.checkFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
+            comp.flush, cFHigh = Suit.checkFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
             if comp.flush == False:
-                comp.flush = Suit.checkFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
+                comp.flush, cFHigh = Suit.checkFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
     
     #check for user royal Flush
     user.rFlush = Suit.checkRFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
@@ -287,25 +295,25 @@ def main():
                 comp.rFlush = Suit.checkRFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
     
     #check for user straight Flush
-    user.sFlush = Suit.checkSFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
+    user.sFlush, uSFHigh = Suit.checkSFlush(spades, userCard1, userCard2, river1, river2, river3, river4, river5)
     if user.sFlush == False:
-        user.sFlush = Suit.checkSFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
+        user.sFlush, uSFHigh = Suit.checkSFlush(clubs, userCard1, userCard2, river1, river2, river3, river4, river5)
         if user.sFlush == False:
-            user.sFlush = Suit.checkSFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
+            user.sFlush, uSFHigh = Suit.checkSFlush(hearts, userCard1, userCard2, river1, river2, river3, river4, river5)
             if user.sFlush == False:
-                user.sFlush = Suit.checkSFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
+                user.sFlush, uSFHigh = Suit.checkSFlush(diamonds, userCard1, userCard2, river1, river2, river3, river4, river5)
     #check for comp straight flush
-    comp.sFlush = Suit.checkSFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
+    comp.sFlush, cSFHigh = Suit.checkSFlush(spades, compCard1, compCard2, river1, river2, river3, river4, river5)
     if comp.sFlush == False:
-        comp.sFlush = Suit.checkSFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
+        comp.sFlush, cSFHigh = Suit.checkSFlush(clubs, compCard1, compCard2, river1, river2, river3, river4, river5)
         if comp.sFlush == False:
-            comp.sFlush = Suit.checkSFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
+            comp.sFlush, cSFHigh = Suit.checkSFlush(hearts, compCard1, compCard2, river1, river2, river3, river4, river5)
             if comp.sFlush == False:
-                comp.sFlush = Suit.checkSFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
+                comp.sFlush, cSFHigh = Suit.checkSFlush(diamonds, compCard1, compCard2, river1, river2, river3, river4, river5)
 
     #check for user and comp straight
-    user.straight = Cards.checkStraight(userCard1, userCard2, river1, river2, river3, river4, river5)
-    comp.straight = Cards.checkStraight(compCard1, compCard2, river1, river2, river3, river4, river5)
+    user.straight, uSHigh = Cards.checkStraight(userCard1, userCard2, river1, river2, river3, river4, river5)
+    comp.straight, cSHigh = Cards.checkStraight(compCard1, compCard2, river1, river2, river3, river4, river5)
 
     #check user and comp pairs
     u3Val, uPairVal = Player.countPairs(user, userCard1, userCard2, river1, river2, river3, river4, river5)
@@ -329,7 +337,7 @@ def main():
         result = "won"
     elif uResult < cResult:
         result = "lost"
-    elif (uResult == 6) | (uResult == 3) | (uResult == 2) | (uResult == 1):
+    elif (uResult == 1) | (uResult == 2) | (uResult == 3) | (uResult == 6):
         if u3Val > c3Val:
             result = "won"
         elif u3Val < c3Val:
@@ -348,7 +356,28 @@ def main():
             else:
                 result = "lost"
         else:
-            result = "lost"        
+            result = "lost"   
+    elif uResult == 4:
+        if uSHigh > cSHigh:
+            result = "won"
+        elif uSHigh == cSHigh:
+            result = "tied"
+        else:
+            result = "lost"
+    elif uResult == 5:
+        if uFHigh > cFHigh:
+            result = "won"
+        elif uFHigh == cFHigh:
+            result = "tied"
+        else:
+            result = "lost"
+    elif uResult == 8:
+        if uSFHigh > cSFHigh:
+            result = "won"
+        elif uSFHigh == cSFHigh:
+            result = "tied"
+        else:
+            result = "lost"     
     else:   
         if value1 > value3:
             result = "won"
