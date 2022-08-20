@@ -374,6 +374,8 @@ def main():
     elif uResult == 8:
         if uSFHigh > cSFHigh:
             result = "won"
+        elif uSFHigh == cSFHigh:
+            result = "tie"
         else:
             result = "lost"     
     else:   
